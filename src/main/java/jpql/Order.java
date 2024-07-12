@@ -10,6 +10,7 @@ public class Order {
     @GeneratedValue
     private Long id;
 
+    @Column(name = "order_amount")
     private int orderAmount;
 
     @Embedded
