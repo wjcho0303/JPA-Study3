@@ -1,25 +1,21 @@
-package org.jpabook.jpashop.domain;
+package jpql;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
-public class Item {
+public class Product {
+
     @Id
     @GeneratedValue
-    @Column(name = "item_id")
     private Long id;
 
     private String name;
 
     private int price;
 
-    @Column(name = "stock_quantity")
-    private int stockQuantity;
-
-    @ManyToMany(mappedBy = "items")
-    private List<Category> categories = new ArrayList<>();
+    private int stockAmount;
 
     public Long getId() {
         return id;
@@ -45,11 +41,11 @@ public class Item {
         this.price = price;
     }
 
-    public int getStockQuantity() {
-        return stockQuantity;
+    public int getStockAmount() {
+        return stockAmount;
     }
 
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
+    public void setStockAmount(int stockAmount) {
+        this.stockAmount = stockAmount;
     }
 }
