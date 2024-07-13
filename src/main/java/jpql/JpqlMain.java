@@ -14,7 +14,7 @@ public class JpqlMain {
 
         try {
 
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 10; i++) {
                 Member member = new Member();
                 Team team = new Team();
                 team.setName("team" + i);
@@ -30,7 +30,7 @@ public class JpqlMain {
             em.clear();
 
             System.out.println("======== START ========");
-            String query = "SELECT m FROM Member m JOIN m.team t ON t.name = m.username";
+            String query = "select m from Member m where m.age > (select avg(m2.age) from Member m2)";
 
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
