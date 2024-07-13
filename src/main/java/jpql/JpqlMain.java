@@ -24,23 +24,39 @@ public class JpqlMain {
             member2.setAge(22);
             em.persist(member2);
 
-            // TypedQuery : 반환 타입이 명확할 때 제네릭과 함께 사용하고, createQuery 에도 반환 타입을 명시한다.
-            TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
-            List<Member> members = query1.getResultList();
+            em.flush();
+            em.clear();
+
+            List<Member> members = em.createQuery("select m from Member m", Member.class)
+                    .getResultList();
+
+            Member findMember = members.get(0);
+            findMember.setAge(20);
+
             for (Member member : members) {
-                System.out.println("memberId: " + member.getId() +
-                        ", memberName: " + member.getUsername() +
-                        ", memberAge: " + member.getAge());
+                System.out.println("member name: " + member.getUsername() + ", member age: " + member.getAge());
             }
 
-            TypedQuery<String> query2 = em.createQuery("select m.username from Member m", String.class);
+            List<Team> team = em.createQuery("select m.team from Member m", Team.class)
+                    .getResultList();
 
-            TypedQuery<Integer> query3 = em.createQuery("select m.age from Member m", Integer.class);
+            List<Address> addressList = em.createQuery("select o.address from Order o", Address.class)
+                    .getResultList();
+            for (Address address : addressList) {
+                System.out.println("address = " + address);
+            }
 
-            // Query : 반환 타입이 명확하지 않을 때
-            Query query4 = em.createQuery("select m.username, m.age from Member m");
+            em.createQuery("select m.username, m.age from Member m")
+                            .getResultList();
 
+            List<MemberDTO> result = em.createQuery(
+                    "select new jpql.MemberDTO(m.username, m.age) from Member m",
+                            MemberDTO.class)
+                    .getResultList();
 
+            MemberDTO memberDTO = result.get(0);
+            System.out.println("memberDTO username = " + memberDTO.getUsername());
+            System.out.println("memberDTO age = " + memberDTO.getAge());
 
             tx.commit();
         } catch (Exception e) {
