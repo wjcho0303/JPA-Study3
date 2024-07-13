@@ -23,14 +23,15 @@ public class JpqlMain {
                 member.setUsername("member" + i);
                 member.setAge(i+16);
                 member.setTeam(team);
+                member.setType(MemberType.USER);
                 em.persist(member);
             }
 
             em.flush();
             em.clear();
 
-            System.out.println("======== START ========");
-            String query = "select m from Member m where m.age > (select avg(m2.age) from Member m2)";
+            System.out.println("======== 1 START ========");
+            String query = "select m from Member m where m.type = jpql.MemberType.USER";
 
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
@@ -40,8 +41,25 @@ public class JpqlMain {
             for (Member member : result) {
                 System.out.println("member = " + member + ", team name: " + member.getTeam().getName());
             }
-            System.out.println("======== END ========");
-            
+            System.out.println("======== 1 END ========");
+
+
+
+            // 패키지명을 파라미터 바인딩으로 해결
+            System.out.println("======== 2 START ========");
+            String query2 = "select m from Member m where m.type = :userType";
+
+            List<Member> result2 = em.createQuery(query2, Member.class)
+                    .setParameter("userType", MemberType.USER)
+                    .getResultList();
+
+            System.out.println("result size: " + result.size());
+
+            for (Member member : result2) {
+                System.out.println("member = " + member + ", team name: " + member.getTeam().getName());
+            }
+            System.out.println("======== 2 END ========");
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
