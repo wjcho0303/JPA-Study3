@@ -14,83 +14,43 @@ public class JpqlMain {
 
         try {
 
-            for (int i = 1; i <= 10; i++) {
-                Member member = new Member();
-                Team team = new Team();
-                team.setName("team" + i);
-                em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
 
-                member.setUsername("member" + i);
-                member.setAge(6*i+16);
-                member.setTeam(team);
-                member.setType(MemberType.USER);
-                em.persist(member);
-            }
+            Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
+
+            Member member1 = new Member();
+            member1.setUsername("홍길동");
+            member1.setTeam(teamA);
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("김철수");
+            member2.setTeam(teamA);
+            em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("나철수");
+            member3.setTeam(teamB);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            System.out.println("======== 1 START ========");
-            String query1 =
-                    "SELECT " +
-                            "CASE " +
-                            "WHEN m.age <= 19 THEN '학생요금' " +
-                            "WHEN m.age >= 60 THEN '경로요금' " +
-                            "ELSE '일반요금' " +
-                            "END " +
-                            "FROM Member m";
+            String query = "select distinct t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(query, Team.class)
+                            .getResultList();
 
-            List<String> result = em.createQuery(query1, String.class)
-                    .getResultList();
-
-            System.out.println("result size: " + result.size());
-
-            for (String s : result) {
-                System.out.println("s = " + s);
+            System.out.println("result size = " + result.size());
+            for (Team team : result) {
+                System.out.println("team = " + team.getName() + "|members = " + team.getMembers().size());
+                for (Member member : team.getMembers()) {
+                    System.out.println("-> member = " + member);
+                }
             }
-            System.out.println("======== 1 END ========");
-
-
-
-            // COALESCE
-            System.out.println("======== 2 START ========");
-
-            Member memberNoName1 = new Member();
-            em.persist(memberNoName1);
-
-            Member memberNoName2 = new Member();
-            em.persist(memberNoName2);
-
-            Member memberHasName = new Member();
-            memberHasName.setUsername("홍길동");
-            em.persist(memberHasName);
-
-            String query2 = "SELECT COALESCE (m.username, '이름 없는 회원') FROM Member m";
-            List<String> result2 = em.createQuery(query2, String.class)
-                    .getResultList();
-
-            System.out.println("result2 size: " + result2.size());
-
-            for (String s : result2) {
-                System.out.println("s = " + s);
-            }
-            System.out.println("======== 2 END ========");
-
-
-            // NULLIF
-            System.out.println("======== 3 START ========");
-
-            String query3 = "SELECT NULLIF (m.username, 'member5') FROM Member m";
-            List<String> result3 = em.createQuery(query3, String.class)
-                    .getResultList();
-
-            System.out.println("result3 size: " + result3.size());
-
-            for (String s : result3) {
-                System.out.println("s = " + s);
-            }
-            System.out.println("======== 3 END ========");
-
 
             tx.commit();
         } catch (Exception e) {
