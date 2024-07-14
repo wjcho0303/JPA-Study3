@@ -40,16 +40,12 @@ public class JpqlMain {
             em.flush();
             em.clear();
 
-            String query = "select distinct t from Team t join fetch t.members";
-            List<Team> result = em.createQuery(query, Team.class)
+            List<Member> members = em.createNamedQuery("Member.findByUsername", Member.class)
+                            .setParameter("username", "홍길동")
                             .getResultList();
 
-            System.out.println("result size = " + result.size());
-            for (Team team : result) {
-                System.out.println("team = " + team.getName() + "|members = " + team.getMembers().size());
-                for (Member member : team.getMembers()) {
-                    System.out.println("-> member = " + member);
-                }
+            for (Member member : members) {
+                System.out.println("member = " + member);
             }
 
             tx.commit();
