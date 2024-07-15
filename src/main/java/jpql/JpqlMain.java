@@ -40,14 +40,11 @@ public class JpqlMain {
             em.flush();
             em.clear();
 
-            List<Member> members = em.createNamedQuery("Member.findByUsername", Member.class)
-                            .setParameter("username", "홍길동")
-                            .getResultList();
+            String query = "UPDATE Member m SET m.age = 20";
+            int resultCount = em.createQuery(query)
+                            .executeUpdate();
 
-            for (Member member : members) {
-                System.out.println("member = " + member);
-            }
-
+            System.out.println("resultCount = " + resultCount);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
