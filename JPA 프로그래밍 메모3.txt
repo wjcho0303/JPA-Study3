@@ -79,7 +79,7 @@ CriteriaBuilder를 이용하면 쿼리를 단순 문자열로 작성하지 않�
 예시 코드부터 살펴보자:
 
 // select m from Member m where m.age > 18
-JPAFactoryQuery query = new JPAQueryFactory(em);
+JPAQueryFactory query = new JPAQueryFactory(em);
 QMember m = QMember.member;
 
 List<Member> list = 
